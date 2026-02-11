@@ -31,14 +31,18 @@ export async function POST(req: NextRequest) {
             },
             {
               role: "user",
-              content: `Conversation context:\n${conversationContext}\n\nKey points to include:\n${agentKeyPoints}\n\nGenerate a concise, professional draft response.`,
+              content: `Conversation context:\n${conversationContext || "(none)"}\n\nKey points to include:\n${agentKeyPoints || "(none)"}\n\nGenerate a concise, professional draft response.`,
             },
           ],
           max_tokens: 800,
         }),
       });
       const data = await response.json();
-      const draft = data.choices?.[0]?.message?.content ?? "Unable to generate draft.";
+      if (!response.ok) {
+        const errMsg = data.error?.message ?? data.error?.code ?? "OpenAI request failed";
+        return NextResponse.json({ error: errMsg }, { status: response.status });
+      }
+      const draft = data.choices?.[0]?.message?.content?.trim() ?? "Unable to generate draft.";
       return NextResponse.json({ draft });
     }
 

@@ -2,6 +2,6 @@
 
 import { init } from "@instantdb/react";
 
-const APP_ID = "6f0f99b1-ab65-4af0-864c-61eeca19a008";
+const APP_ID = process.env.NEXT_PUBLIC_INSTANT_APP_ID ?? "";
 
 export const db = init({ appId: APP_ID });

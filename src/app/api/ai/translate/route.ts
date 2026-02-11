@@ -26,8 +26,12 @@ export async function POST(req: NextRequest) {
         }),
       });
       const data = await response.json();
+      if (!response.ok) {
+        const errMsg = data.error?.message ?? data.error?.code ?? "OpenAI request failed";
+        return NextResponse.json({ error: errMsg }, { status: response.status });
+      }
       const translation =
-        data.choices?.[0]?.message?.content ?? "Unable to translate.";
+        data.choices?.[0]?.message?.content?.trim() ?? "Unable to translate.";
       return NextResponse.json({ translation });
     }
 

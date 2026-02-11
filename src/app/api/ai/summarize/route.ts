@@ -27,8 +27,12 @@ export async function POST(req: NextRequest) {
         }),
       });
       const data = await response.json();
+      if (!response.ok) {
+        const errMsg = data.error?.message ?? data.error?.code ?? "OpenAI request failed";
+        return NextResponse.json({ error: errMsg }, { status: response.status });
+      }
       const summary =
-        data.choices?.[0]?.message?.content ?? "Unable to generate summary.";
+        data.choices?.[0]?.message?.content?.trim() ?? "Unable to generate summary.";
       return NextResponse.json({ summary });
     }
 

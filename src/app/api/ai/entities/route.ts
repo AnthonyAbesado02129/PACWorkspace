@@ -26,8 +26,12 @@ export async function POST(req: NextRequest) {
         }),
       });
       const data = await response.json();
+      if (!response.ok) {
+        const errMsg = data.error?.message ?? data.error?.code ?? "OpenAI request failed";
+        return NextResponse.json({ error: errMsg }, { status: response.status });
+      }
       const result =
-        data.choices?.[0]?.message?.content ?? "Unable to extract entities.";
+        data.choices?.[0]?.message?.content?.trim() ?? "Unable to extract entities.";
       return NextResponse.json({ result });
     }
 
