@@ -6,7 +6,7 @@ AI-powered browser sidebar app for drafting responses, extracting entities, dete
 
 - **Next.js** (App Router)
 - **React** + **Tailwind CSS**
-- **InstantDB** (App ID: `6f0f99b1-ab65-4af0-864c-61eeca19a008`)
+- **InstantDB**
 
 ## Getting started
 
