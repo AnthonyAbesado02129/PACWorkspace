@@ -18,10 +18,17 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000). You’ll see the **Sign In** page. Sign-in uses **InstantDB magic code (OTP)** sent to the test email; all test accounts use that same email for verification.
 
-### Using as a browser sidebar
+### Using as a browser sidebar (Chrome / Edge extension)
 
-- Open the app in a narrow window or a browser sidebar (e.g. Sidebery, Sidebar API, or a dedicated sidebar window).
-- The left navigation is fixed width; the main content area adapts to the remaining space.
+A **browser extension** in the `extension/` folder opens PAC Workspace in the browser’s **side panel**:
+
+1. Deploy the app (e.g. Vercel) or run it locally (`npm run dev`).
+2. In Chrome or Edge, go to `chrome://extensions` (or `edge://extensions`), enable **Developer mode**, and click **Load unpacked**.
+3. Select the project’s **`extension`** folder.
+4. Right‑click the extension icon → **Options**, set the app URL (e.g. `http://localhost:3000` or your deployed URL), and save.
+5. Click the extension icon to open the side panel.
+
+See **`extension/README.md`** for details and optional icon/publish steps.
 
 ## Environment variables
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useExtensionMode } from "@/hooks/use-extension-mode";
 
 const INDUSTRIES = [
   "BFSI",
@@ -15,6 +16,7 @@ const TONES = ["Formal", "Friendly", "Empathetic"];
 const MOODS = ["Neutral", "Frustrated", "Urgent", "Anxious", "Happy"];
 
 export default function ComposePage() {
+  const isExtension = useExtensionMode();
   const [industry, setIndustry] = useState("BFSI");
   const [persona, setPersona] = useState("Customer Care");
   const [tone, setTone] = useState("Formal");
@@ -26,6 +28,7 @@ export default function ComposePage() {
   const [policySafe, setPolicySafe] = useState(false);
   const [qualityCheck, setQualityCheck] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [optionsOpen, setOptionsOpen] = useState(false);
 
   const handleGenerate = async () => {
     setLoading(true);
@@ -57,17 +60,17 @@ export default function ComposePage() {
     navigator.clipboard.writeText(draft);
   };
 
-  return (
-    <div className="flex gap-6">
-      <div className="min-w-0 flex-1 space-y-6">
+  const content = (
+    <>
+      <div className="min-w-0 flex-1 space-y-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Compose</h1>
-          <p className="text-gray-600">
+          <h1 className={isExtension ? "text-lg font-bold text-gray-900" : "text-2xl font-bold text-gray-900"}>Compose</h1>
+          <p className={isExtension ? "text-xs text-gray-600" : "text-gray-600"}>
             Draft AI-powered responses with policy compliance.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
+        <div className={`grid gap-3 ${isExtension ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-2 sm:grid-cols-5"}`}>
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
               Industry
@@ -143,48 +146,48 @@ export default function ComposePage() {
             type="button"
             onClick={handleGenerate}
             disabled={loading}
-            className="flex items-center gap-2 rounded-lg bg-[#6a1b9a] px-6 py-3 font-medium text-white hover:bg-[#7b1fa2] disabled:opacity-60"
+            className={`flex items-center gap-2 rounded-lg bg-[#6a1b9a] font-medium text-white hover:bg-[#7b1fa2] disabled:opacity-60 ${isExtension ? "px-4 py-2 text-sm" : "px-6 py-3"}`}
           >
             <span>✨</span> Generate Draft
           </button>
         </div>
 
-        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          <h3 className="mb-2 flex items-center gap-2 font-medium text-gray-900">
+        <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
+          <h3 className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-900">
             <span>💬</span> Conversation Context
           </h3>
           <textarea
             value={conversationContext}
             onChange={(e) => setConversationContext(e.target.value)}
             placeholder="Paste the conversation transcript here..."
-            className="h-32 w-full resize-y rounded-lg border border-gray-200 p-3 text-sm"
-            rows={4}
+            className={`w-full resize-y rounded-lg border border-gray-200 p-3 text-sm ${isExtension ? "h-24 min-h-[80px]" : "h-32"}`}
+            rows={isExtension ? 3 : 4}
           />
         </div>
 
-        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          <h3 className="mb-2 font-medium text-gray-900">Agent Key Points</h3>
+        <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
+          <h3 className="mb-2 text-sm font-medium text-gray-900">Agent Key Points</h3>
           <textarea
             value={agentKeyPoints}
             onChange={(e) => setAgentKeyPoints(e.target.value)}
             placeholder="Key points to include in the response..."
-            className="h-24 w-full resize-y rounded-lg border border-gray-200 p-3 text-sm"
-            rows={3}
+            className={`w-full resize-y rounded-lg border border-gray-200 p-3 text-sm ${isExtension ? "h-20 min-h-[60px]" : "h-24"}`}
+            rows={isExtension ? 2 : 3}
           />
         </div>
 
-        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          <h3 className="mb-2 flex items-center gap-2 font-medium text-gray-900">
+        <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
+          <h3 className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-900">
             <span>📄</span> AI Generated Draft (editable)
           </h3>
           <textarea
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             placeholder="Generated draft will appear here... You can edit it before copying."
-            className="h-48 w-full resize-y rounded-lg border border-gray-200 p-3 text-sm"
-            rows={8}
+            className={`w-full resize-y rounded-lg border border-gray-200 p-3 text-sm ${isExtension ? "h-36 min-h-[120px]" : "h-48"}`}
+            rows={isExtension ? 6 : 8}
           />
-          <div className="mt-3 flex gap-2">
+          <div className={`mt-3 flex flex-wrap gap-2 ${isExtension ? "flex-col sm:flex-row" : ""}`}>
             <button
               type="button"
               className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
@@ -202,66 +205,144 @@ export default function ComposePage() {
         </div>
       </div>
 
-      <div className="w-72 shrink-0">
-        <div className="sticky top-6 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          <h3 className="mb-4 font-semibold text-gray-900">Processing Options</h3>
-          <div className="space-y-4">
-            <div>
-              <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 font-medium text-gray-800">
-                  <span>🛡️</span> Policy-Safe
-                </span>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={policySafe}
-                  onClick={() => setPolicySafe(!policySafe)}
-                  className={`relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors ${
-                    policySafe ? "bg-[#6a1b9a]" : "bg-gray-200"
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
-                      policySafe ? "translate-x-5" : "translate-x-0.5"
-                    } mt-0.5`}
-                  />
-                </button>
+      {isExtension ? (
+        <div className="w-full shrink-0">
+          <button
+            type="button"
+            onClick={() => setOptionsOpen((o) => !o)}
+            className="flex w-full items-center justify-between rounded-xl border border-gray-200 bg-white p-3 shadow-sm"
+          >
+            <span className="font-semibold text-gray-900">Processing Options</span>
+            <span className="text-gray-500">{optionsOpen ? "▼" : "▶"}</span>
+          </button>
+          {optionsOpen && (
+            <div className="mt-2 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+              <div className="space-y-4">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center gap-2 text-sm font-medium text-gray-800">
+                      <span>🛡️</span> Policy-Safe
+                    </span>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={policySafe}
+                      onClick={() => setPolicySafe(!policySafe)}
+                      className={`relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors ${
+                        policySafe ? "bg-[#6a1b9a]" : "bg-gray-200"
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+                          policySafe ? "translate-x-5" : "translate-x-0.5"
+                        } mt-0.5`}
+                      />
+                    </button>
+                  </div>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Enforces industry-specific compliance rules during generation.
+                  </p>
+                </div>
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center gap-2 text-sm font-medium text-gray-800">
+                      <span>✓</span> Quality Check
+                    </span>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={qualityCheck}
+                      onClick={() => setQualityCheck(!qualityCheck)}
+                      className={`relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors ${
+                        qualityCheck ? "bg-[#6a1b9a]" : "bg-gray-200"
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+                          qualityCheck ? "translate-x-5" : "translate-x-0.5"
+                        } mt-0.5`}
+                      />
+                    </button>
+                  </div>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Auto-runs policy audit when draft is generated.
+                  </p>
+                  <p className="mt-1 text-xs text-gray-400">
+                    Tip: You can always re-run quality check manually after editing.
+                  </p>
+                </div>
               </div>
-              <p className="mt-1 text-xs text-gray-500">
-                Enforces industry-specific compliance rules during generation.
-              </p>
             </div>
-            <div>
-              <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 font-medium text-gray-800">
-                  <span>✓</span> Quality Check
-                </span>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={qualityCheck}
-                  onClick={() => setQualityCheck(!qualityCheck)}
-                  className={`relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors ${
-                    qualityCheck ? "bg-[#6a1b9a]" : "bg-gray-200"
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
-                      qualityCheck ? "translate-x-5" : "translate-x-0.5"
-                    } mt-0.5`}
-                  />
-                </button>
+          )}
+        </div>
+      ) : (
+        <div className="w-72 shrink-0">
+          <div className="sticky top-6 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <h3 className="mb-4 font-semibold text-gray-900">Processing Options</h3>
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-2 font-medium text-gray-800">
+                    <span>🛡️</span> Policy-Safe
+                  </span>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={policySafe}
+                    onClick={() => setPolicySafe(!policySafe)}
+                    className={`relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors ${
+                      policySafe ? "bg-[#6a1b9a]" : "bg-gray-200"
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+                        policySafe ? "translate-x-5" : "translate-x-0.5"
+                      } mt-0.5`}
+                    />
+                  </button>
+                </div>
+                <p className="mt-1 text-xs text-gray-500">
+                  Enforces industry-specific compliance rules during generation.
+                </p>
               </div>
-              <p className="mt-1 text-xs text-gray-500">
-                Auto-runs policy audit when draft is generated.
-              </p>
-              <p className="mt-1 text-xs text-gray-400">
-                Tip: You can always re-run quality check manually after editing.
-              </p>
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-2 font-medium text-gray-800">
+                    <span>✓</span> Quality Check
+                  </span>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={qualityCheck}
+                    onClick={() => setQualityCheck(!qualityCheck)}
+                    className={`relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors ${
+                      qualityCheck ? "bg-[#6a1b9a]" : "bg-gray-200"
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+                        qualityCheck ? "translate-x-5" : "translate-x-0.5"
+                      } mt-0.5`}
+                    />
+                  </button>
+                </div>
+                <p className="mt-1 text-xs text-gray-500">
+                  Auto-runs policy audit when draft is generated.
+                </p>
+                <p className="mt-1 text-xs text-gray-400">
+                  Tip: You can always re-run quality check manually after editing.
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
+    </>
+  );
+
+  return (
+    <div className={isExtension ? "flex flex-col gap-4" : "flex gap-6"}>
+      {content}
     </div>
   );
 }

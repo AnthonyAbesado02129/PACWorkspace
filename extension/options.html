@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PAC Workspace – Options</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 480px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    h1 { font-size: 1.25rem; color: #1a1a1a; }
+    label { display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151; }
+    input[type="url"] {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background: #6a1b9a;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    button:hover { background: #7b1fa2; }
+    .hint { font-size: 0.8125rem; color: #6b7280; margin-top: 0.5rem; }
+    .saved { font-size: 0.875rem; color: #059669; margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <h1>PAC Workspace – Options</h1>
+  <p class="hint">Set the URL where your PAC Workspace app is running. The sidebar will load this URL.</p>
+  <form id="options-form">
+    <label for="app-url">App URL</label>
+    <input type="url" id="app-url" placeholder="https://your-app.vercel.app or http://localhost:3000" />
+    <p class="hint">Examples: <code>http://localhost:3000</code> (dev) or your deployed URL (e.g. Vercel).</p>
+    <button type="submit">Save</button>
+    <p id="saved-msg" class="saved" style="display: none;">Saved. Reopen the side panel to use the new URL.</p>
+  </form>
+  <script src="options.js"></script>
+</body>
+</html>

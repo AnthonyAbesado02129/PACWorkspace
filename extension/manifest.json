@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "PAC Workspace",
+  "version": "1.0.0",
+  "description": "Persona Agent Copilot – draft AI-powered responses, extract entities, analyze intents, and more in a browser sidebar.",
+  "permissions": ["sidePanel", "storage"],
+  "host_permissions": ["https://*/*", "http://localhost:*/*", "http://127.0.0.1:*/*"],
+  "action": {
+    "default_title": "Open PAC Workspace"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_page": "options.html"
+}

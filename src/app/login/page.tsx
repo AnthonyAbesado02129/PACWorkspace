@@ -12,26 +12,29 @@ import {
   type TestAccount,
 } from "@/lib/auth";
 
-function TestAccountItem({
+function TestAccountRadio({
   account,
   label,
-  icon,
+  checked,
   onSelect,
 }: {
   account: TestAccount;
   label: string;
-  icon: string;
+  checked: boolean;
   onSelect: () => void;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onSelect}
-      className="flex w-full cursor-pointer items-center gap-2 rounded-lg border border-gray-200 p-3 text-left text-sm text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#6a1b9a] focus:ring-offset-2"
-    >
-      <span className="text-base">{icon}</span>
+    <label className="flex w-full cursor-pointer items-start gap-3 rounded-lg border border-gray-200 p-3 text-left text-sm text-gray-700 transition-colors hover:bg-gray-50 has-[:checked]:border-[#6a1b9a] has-[:checked]:bg-[#f5f3ff]">
+      <input
+        type="radio"
+        name="testAccount"
+        value={account.email}
+        checked={checked}
+        onChange={onSelect}
+        className="mt-1 h-4 w-4 border-gray-300 text-[#6a1b9a] focus:ring-[#6a1b9a]"
+      />
       <span className="flex-1">{label}</span>
-    </button>
+    </label>
   );
 }
 
@@ -40,6 +43,7 @@ export default function LoginPage() {
   const { user: instantUser } = db.useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [selectedAccount, setSelectedAccount] = useState<TestAccount | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -49,6 +53,7 @@ export default function LoginPage() {
   }, [instantUser, router]);
 
   const fillFromAccount = (account: TestAccount) => {
+    setSelectedAccount(account);
     setEmail(account.email);
     setPassword(TEST_PASSWORD);
   };
@@ -109,7 +114,10 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setSelectedAccount(null);
+                }}
                 placeholder="you@example.com"
                 className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm focus:border-[#6a1b9a] focus:outline-none focus:ring-1 focus:ring-[#6a1b9a]"
                 autoComplete="email"
@@ -142,51 +150,51 @@ export default function LoginPage() {
         {/* Test Accounts card */}
         <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-lg">
           <h3 className="mb-1 text-sm font-semibold text-gray-900">Test Accounts</h3>
-          <p className="mb-4 text-xs text-gray-500">Click to auto-fill credentials</p>
+          <p className="mb-4 text-xs text-gray-500">Select an account to auto-fill credentials</p>
 
           <div className="space-y-3">
             <div>
-              <p className="mb-2 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-gray-500">
-                <span>🔒</span> Admin (Global)
+              <p className="mb-2 text-xs font-medium uppercase tracking-wider text-gray-500">
+                Admin (Global)
               </p>
               {TEST_ACCOUNTS.admin.map((account) => (
                 <div key={account.email} className="mb-2">
-                  <TestAccountItem
+                  <TestAccountRadio
                     account={account}
                     label={account.email}
-                    icon="🔒"
+                    checked={selectedAccount?.email === account.email}
                     onSelect={() => fillFromAccount(account)}
                   />
                 </div>
               ))}
             </div>
             <div>
-              <p className="mb-2 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-gray-500">
-                <span>👥</span> Supervisors
+              <p className="mb-2 text-xs font-medium uppercase tracking-wider text-gray-500">
+                Supervisors
               </p>
               <div className="space-y-2">
                 {TEST_ACCOUNTS.supervisors.map((account) => (
-                  <TestAccountItem
+                  <TestAccountRadio
                     key={account.email}
                     account={account}
                     label={`${account.email} (${account.scope})`}
-                    icon="👥"
+                    checked={selectedAccount?.email === account.email}
                     onSelect={() => fillFromAccount(account)}
                   />
                 ))}
               </div>
             </div>
             <div>
-              <p className="mb-2 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-gray-500">
-                <span>👥</span> Agents
+              <p className="mb-2 text-xs font-medium uppercase tracking-wider text-gray-500">
+                Agents
               </p>
               <div className="space-y-2">
                 {TEST_ACCOUNTS.agents.map((account) => (
-                  <TestAccountItem
+                  <TestAccountRadio
                     key={account.email}
                     account={account}
                     label={`${account.email} (${account.scope})`}
-                    icon="👥"
+                    checked={selectedAccount?.email === account.email}
                     onSelect={() => fillFromAccount(account)}
                   />
                 ))}

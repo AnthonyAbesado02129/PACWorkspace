@@ -22,11 +22,11 @@ const COMING_SOON = [
   { label: "Templates", icon: "📋" },
 ];
 
-export function Sidebar() {
+export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return (
-    <aside className="flex w-56 flex-col bg-[#4a148c] text-white">
+    <aside className="flex h-full w-56 flex-col bg-[#4a148c] text-white">
       <div className="border-b border-white/10 p-4">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-sm font-bold">
@@ -50,6 +50,7 @@ export function Sidebar() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
+                    onClick={onNavigate}
                     className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors ${
                       isActive
                         ? "bg-[#7b1fa2] text-white"
@@ -75,6 +76,7 @@ export function Sidebar() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
+                    onClick={onNavigate}
                     className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors ${
                       isActive
                         ? "bg-[#7b1fa2] text-white"
@@ -101,6 +103,7 @@ export function Sidebar() {
                   <li key={item.href}>
                     <Link
                       href={item.href}
+                      onClick={onNavigate}
                       className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors ${
                         isActive
                           ? "bg-[#7b1fa2] text-white"

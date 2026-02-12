@@ -1,4 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getMasterPrompt } from "@/lib/master-prompt";
+
+function applyMasterPromptTemplate(
+  template: string,
+  vars: { persona?: string; vertical?: string; rules?: string; transcript?: string }
+): string {
+  return template
+    .replace(/\{\{persona\}\}/g, vars.persona ?? "customer care assistant")
+    .replace(/\{\{vertical\}\}/g, vars.vertical ?? "general")
+    .replace(/\{\{rules\}\}/g, vars.rules ?? "Be professional, accurate, and helpful.")
+    .replace(/\{\{transcript\}\}/g, vars.transcript ?? "(none)");
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,6 +28,16 @@ export async function POST(req: NextRequest) {
 
     const openaiKey = process.env.OPENAI_API_KEY;
     if (openaiKey) {
+      const masterTemplate = getMasterPrompt("compose");
+      const rulesText = policySafe
+        ? "Apply industry-specific compliance rules. Avoid making promises about refunds or outcomes. Be transparent and accurate."
+        : "Be professional, accurate, and helpful.";
+      const systemContent = applyMasterPromptTemplate(masterTemplate, {
+        persona: persona || "customer care assistant",
+        vertical: industry || "general",
+        rules: rulesText,
+        transcript: conversationContext || "(none)",
+      });
       const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -27,11 +49,11 @@ export async function POST(req: NextRequest) {
           messages: [
             {
               role: "system",
-              content: `You are a customer care assistant. Industry: ${industry}. Persona: ${persona}. Tone: ${tone}. Customer mood: ${customerMood}. Salutation: ${salutation || "Mr./Ms."}. ${policySafe ? "Apply industry-specific compliance rules. Avoid making promises about refunds or outcomes. Be transparent and accurate." : ""}`,
+              content: systemContent,
             },
             {
               role: "user",
-              content: `Conversation context:\n${conversationContext || "(none)"}\n\nKey points to include:\n${agentKeyPoints || "(none)"}\n\nGenerate a concise, professional draft response.`,
+              content: `Tone: ${tone}. Customer mood: ${customerMood}. Salutation: ${salutation || "Mr./Ms."}.\n\nKey points to include:\n${agentKeyPoints || "(none)"}\n\nGenerate a concise, professional draft response.`,
             },
           ],
           max_tokens: 800,
