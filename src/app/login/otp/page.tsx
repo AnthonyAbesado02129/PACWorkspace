@@ -10,12 +10,13 @@ import {
   getPendingLoginAccount,
   clearPendingLoginAccount,
   setUser,
+  type TestAccount,
 } from "@/lib/auth";
 
 export default function LoginOTPPage() {
   const router = useRouter();
   const { user: instantUser } = db.useAuth();
-  const [pendingAccount, setPendingAccount] = useState<ReturnType<typeof getPendingLoginAccount>>(undefined);
+  const [pendingAccount, setPendingAccount] = useState<TestAccount | null>(null);
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
@@ -88,7 +89,7 @@ export default function LoginOTPPage() {
     }
   };
 
-  if (pendingAccount === undefined || pendingAccount === null) {
+  if (pendingAccount === null) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#f0f2f5]">
         <div className="text-gray-500">Loading...</div>
